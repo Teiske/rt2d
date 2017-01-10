@@ -1,29 +1,38 @@
 /**
- * This class describes MyEntity behavior.
- *
- * Copyright 2015 Your Name <you@yourhost.com>
- */
+* This class describes MyEntity behavior.
+*
+* Copyright 2016 Teis Gossen <teisgossen@gmail.com>
+*/
 
 #include "myentity.h"
 
-MyEntity::MyEntity() : Entity()
-{
+MyEntity::MyEntity() : Entity() {
 	this->addSprite("assets/square.tga");
-	this->sprite()->color = RED;
+	//this->sprite()->color = RED;
+
+	velocity = Vector2(0, 0);
+	gravity = Vector2(0, 9);
+	acceleration = Vector2(0, 0);
 }
 
-MyEntity::~MyEntity()
-{
+MyEntity::~MyEntity() {
 
 }
 
-void MyEntity::update(float deltaTime)
-{
-	// ###############################################################
-	// Rotate
-	// ###############################################################
-	this->rotation += HALF_PI * deltaTime; // 90 deg/sec
-	if (this->rotation > TWO_PI) {
-		this->rotation -= TWO_PI;
+void MyEntity::addForce(Vector2 force) {
+	this->acceleration += force;
+}
+
+void MyEntity::update(float deltaTime) {
+	this->addForce(gravity);
+	this->velocity += acceleration;
+	this->position += velocity * deltaTime;
+
+	velocity *= 0.99f;
+	acceleration *= 0;
+
+	if (this->position.y >= 600) {
+		this->velocity *= -0.9f;
+		this->position.y = 600;
 	}
 }

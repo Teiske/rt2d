@@ -1,10 +1,10 @@
 /**
- * Copyright 2015 Your Name <you@yourhost.com>
- *
- * @file myscene.h
- *
- * @brief description of MyScene behavior.
- */
+* Copyright 2015 Your Name <you@yourhost.com>
+*
+* @file myscene.h
+*
+* @brief description of MyScene behavior.
+*/
 
 #ifndef MYSCENE_H
 #define MYSCENE_H
@@ -32,6 +32,9 @@ private:
 	MyEntity* myentity;
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
+
+	bool jump = false;
+	bool gravityPull = false;
 };
 
 #endif /* SCENE00_H */
