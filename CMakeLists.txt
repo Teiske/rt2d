@@ -196,6 +196,10 @@ add_executable(start
 	start/myentity.h
 	start/myscene.cpp
 	start/myscene.h
+	start/myenemy.cpp
+	start/myenemy.h
+	start/entitycollision.cpp
+	start/entitycollision.h
 )
 target_link_libraries(start
 	${ALL_LIBS}

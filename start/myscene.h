@@ -12,10 +12,11 @@
 #include <rt2d/scene.h>
 
 #include "myentity.h"
+#include "myenemy.h"
+#include "entitycollision.h"
 
 /// @brief The MyScene class is the Scene implementation.
-class MyScene : public Scene
-{
+class MyScene : public Scene {
 public:
 	/// @brief Constructor
 	MyScene();
@@ -30,6 +31,8 @@ public:
 private:
 	/// @brief the rotating square in the middle of the screen
 	MyEntity* myentity;
+
+	MyEntity* myenemy;
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 

@@ -10,17 +10,17 @@
 #define MYENTITY_H
 
 #include <rt2d/entity.h>
+#include "entitycollision.h"
 
 /// @brief The MyEntity class is the Entity implementation.
-class MyEntity : public Entity
-{
+class MyEntity : public EntityCollision {
 public:
 	/// @brief Constructor
 	MyEntity();
 	/// @brief Destructor
 	virtual ~MyEntity();
 
-	/// @brief addForce used to apply thing like gravity or wind pressure
+	/// @brief addForce used to apply things like gravity or wind pressure
 	/// @param Force is what is applied to the entity to make it fall or blown away
 	/// @return force
 	void addForce(Vector2 force);

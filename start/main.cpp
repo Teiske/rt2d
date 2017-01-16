@@ -1,15 +1,15 @@
 /**
- * Copyright 2015 Your Name <you@yourhost.com>
+ * Copyright 2016 Teis Gossen <teisgossen@gmail.com>
  *
- * @brief Description of My Awesome Game.
+ * @brief MY game I Am The Hero where you can decide if you want te be the hero.
  *
  * @file main.cpp
  *
- * @mainpage My Awesome Game
+ * @mainpage I Am The Hero
  *
  * @section intro Introduction
  *
- * Detailed description of My Awesome Game.
+ * My game I Am The Hero is a game where you have the option to load in a character of yourself so you can play the hero and save your prins or prinses.
  *
  * There's even a second paragraph.
  */
@@ -18,8 +18,7 @@
 #include "myscene.h"
 
 /// @brief main entry point
-int main( void )
-{
+int main( void ) {
 	// Core instance
 	Core core;
 

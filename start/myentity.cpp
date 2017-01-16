@@ -6,9 +6,9 @@
 
 #include "myentity.h"
 
-MyEntity::MyEntity() : Entity() {
-	this->addSprite("assets/square.tga");
-	//this->sprite()->color = RED;
+MyEntity::MyEntity() : EntityCollision() {
+	this->addSprite("assets/square3.tga");
+	this->sprite()->color = RED;
 
 	velocity = Vector2(0, 0);
 	gravity = Vector2(0, 9);
@@ -32,7 +32,7 @@ void MyEntity::update(float deltaTime) {
 	acceleration *= 0;
 
 	if (this->position.y >= 600) {
-		this->velocity *= -0.9f;
+		this->velocity *= -0.0f;
 		this->position.y = 600;
 	}
 }
