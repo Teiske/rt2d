@@ -20,13 +20,12 @@ MyScene::MyScene() : Scene() {
 	myentity->scale = Point2(1, 1);
 
 	myenemy = new MyEntity();
-	myenemy->position = Point2(200, 200);
+	myenemy->position = Point2(200, 590);
 	myenemy->scale = Point2(1, 1);
 
 	// create the scene 'tree'
 	// add myentity to this Scene as a child.
 	this->addChild(myentity);
-
 	this->addChild(myenemy);
 }
 
@@ -34,7 +33,6 @@ MyScene::MyScene() : Scene() {
 MyScene::~MyScene() {
 	// deconstruct and delete the Tree
 	this->removeChild(myentity);
-
 	this->removeChild(myenemy);
 
 	// delete myentity from the heap (there was a 'new' in the constructor)
