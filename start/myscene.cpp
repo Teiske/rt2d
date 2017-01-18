@@ -1,8 +1,8 @@
 /**
-* This class describes MyScene behavior.
-*
-* Copyright 2016 Teis Gossen <teisgossen@gmail.com>
-*/
+ * This class describes MyScene behavior.
+ *
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
+ */
 
 #include <fstream>
 #include <sstream>
@@ -16,7 +16,7 @@ MyScene::MyScene() : Scene() {
 	// create a single instance of MyEntity in the middle of the screen.
 	// the Sprite is added in Constructor of MyEntity.
 	myentity = new MyEntity();
-	myentity->position = Point2(SWIDTH / 2, SHEIGHT / 2);
+	myentity->position = Point2(SWIDTH / 2, 450);
 	myentity->scale = Point2(1, 1);
 
 	myenemy = new MyEnemy();
@@ -38,6 +38,19 @@ MyScene::~MyScene() {
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
 	delete myenemy;
+}
+
+void MyScene::enemySpawn(int amount) {
+	for (int i = 0; i > amount; i++) {
+		rand() * 100;
+		int ypos = 600;
+
+		myenemy = new MyEnemy();
+		myenemy->position = Point2(i, ypos);
+
+		this->addChild(myenemy);
+		//myenemy.push_back(myenemy);
+	}
 }
 
 void MyScene::update(float deltaTime) {
@@ -67,10 +80,10 @@ void MyScene::update(float deltaTime) {
 	}
 
 	// Rotate color of entity
-	if (t.seconds() > 0.0333f) {
-		 RGBAColor color = myentity->sprite()->color;
-		 myentity->sprite()->color = Color::rotate(color, 0.01f);
-		 t.start();
-	}
+	//if (t.seconds() > 0.0333f) {
+		 //RGBAColor color = myentity->sprite()->color;
+		 //myentity->sprite()->color = Color::rotate(color, 0.01f);
+		 //t.start();
+	//}
 	
 }

@@ -1,13 +1,13 @@
 /**
-* This class describes MyEntity behavior.
-*
-* Copyright 2016 Teis Gossen <teisgossen@gmail.com>
-*/
+ * This class describes MyEntity behavior.
+ *
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
+ */
 
 #include "myentity.h"
 
 MyEntity::MyEntity() : EntityCollision() {
-	this->addSprite("assets/square3.tga");
+	this->addSprite("assets/squarePlayer.tga");
 	this->sprite()->color = BLUE;
 
 	velocity = Vector2(0, 0);

@@ -1,3 +1,10 @@
+/**
+ * This class describes Entity Collision behavior.
+ *
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
+ */
+
+
 #include "entitycollision.h"
 
 EntityCollision::EntityCollision() {

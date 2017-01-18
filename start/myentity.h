@@ -1,15 +1,16 @@
 /**
-* Copyright 2015 Your Name <you@yourhost.com>
-*
-* @file myentity.h
-*
-* @brief description of MyEntity behavior.
-*/
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
+ *
+ * @file myscene.h
+ *
+ * @brief description of MyEntity behavior.
+ */
 
 #ifndef MYENTITY_H
 #define MYENTITY_H
 
 #include <rt2d/entity.h>
+
 #include "entitycollision.h"
 
 /// @brief The MyEntity class is the Entity implementation.

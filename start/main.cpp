@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Teis Gossen <teisgossen@gmail.com>
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
  *
  * @brief MY game I Am The Hero where you can decide if you want te be the hero.
  *

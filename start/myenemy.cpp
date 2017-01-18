@@ -1,8 +1,15 @@
+/**
+ * This class describes MyEnemy behavior.
+ *
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
+ */
+
+
 #include "myenemy.h"
 #include "myentity.h"
 
 MyEnemy::MyEnemy() : EntityCollision() {
-	this->addSprite("assets/square2.tga");
+	this->addSprite("assets/squareEnemy.tga");
 	this->sprite()->color = RED;
 
 	velocity = Vector2(0, 0);

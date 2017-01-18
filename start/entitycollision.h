@@ -1,13 +1,23 @@
+/**
+ * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
+ *
+ * @file myscene.h
+ *
+ * @brief description of EntityCollision behavior.
+ */
+
 #ifndef ENTITYCOLLISION_H
 #define ENTITYCOLLISION_H
 
 #include <rt2d\entity.h>
 
-class EntityCollision : public Entity 
-{
+/// @brief The EntityCollision class is the Scene implementation.
+class EntityCollision : public Entity {
 public:
+	/// @brief Constructor
 	EntityCollision();
 
+	/// @brief Destructor
 	virtual ~EntityCollision();
 
 	/// @brief isCollidingWith is used to check if an entity ic colliding with another entity.
