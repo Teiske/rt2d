@@ -8,7 +8,7 @@
 
 MyEntity::MyEntity() : EntityCollision() {
 	this->addSprite("assets/square3.tga");
-	this->sprite()->color = RED;
+	this->sprite()->color = BLUE;
 
 	velocity = Vector2(0, 0);
 	gravity = Vector2(0, 9);

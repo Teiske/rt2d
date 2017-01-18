@@ -19,8 +19,8 @@ MyScene::MyScene() : Scene() {
 	myentity->position = Point2(SWIDTH / 2, SHEIGHT / 2);
 	myentity->scale = Point2(1, 1);
 
-	myenemy = new MyEntity();
-	myenemy->position = Point2(200, 590);
+	myenemy = new MyEnemy();
+	myenemy->position = Point2(200, 450);
 	myenemy->scale = Point2(1, 1);
 
 	// create the scene 'tree'

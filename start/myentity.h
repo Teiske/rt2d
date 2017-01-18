@@ -30,8 +30,6 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
-
-
 private:
 	/* add your private declarations */
 	Vector2 velocity;

@@ -1,9 +1,11 @@
 #include "entitycollision.h"
 
 EntityCollision::EntityCollision() {
+
 }
 
 EntityCollision::~EntityCollision() {
+
 }
 
 bool EntityCollision::isCollidingWith(Entity * other) {

@@ -7,6 +7,7 @@ class EntityCollision : public Entity
 {
 public:
 	EntityCollision();
+
 	virtual ~EntityCollision();
 
 	/// @brief isCollidingWith is used to check if an entity ic colliding with another entity.
