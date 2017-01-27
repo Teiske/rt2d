@@ -14,6 +14,7 @@
 
 #include "myentity.h"
 #include "myenemy.h"
+#include "myplatform.h"
 #include "entitycollision.h"
 
 /// @brief The MyScene class is the Scene implementation.
@@ -25,23 +26,30 @@ public:
 	/// @brief Destructor
 	virtual ~MyScene();
 	
-	void enemySpawn(int amount);
+	void enemySpawn(float x, float y);
 	/// @brief update is automatically called every frame
 	/// @param deltaTime the elapsed time in seconds
 	/// @return void
 	virtual void update(float deltaTime);
 
+	void despawnEnemy();
+
 private:
 	/// @brief The squares on the screen
 	MyEntity* myentity;
 
-	MyEnemy* myenemy;
+	std::vector<MyEnemy*> myenemyVector;
+	std::vector<MyPlatform*> myplatformVector;
+
 
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 
 	/// @brief a boolean so you can jump
 	bool jump = false;
+
+	
+
 };
 
 #endif /* SCENE00_H */

@@ -9,8 +9,6 @@
 #ifndef MYENTITY_H
 #define MYENTITY_H
 
-#include <rt2d/entity.h>
-
 #include "entitycollision.h"
 
 /// @brief The MyEntity class is the Entity implementation.

@@ -6,7 +6,6 @@
 
 
 #include "myenemy.h"
-#include "myentity.h"
 
 MyEnemy::MyEnemy() : EntityCollision() {
 	this->addSprite("assets/squareEnemy.tga");

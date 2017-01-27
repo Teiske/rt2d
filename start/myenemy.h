@@ -9,8 +9,6 @@
 #ifndef MYENEMY_H
 #define MYENEMY_H
 
-#include <rt2d/entity.h>
-
 #include "entitycollision.h"
 
 /// @brief The MyEnemy class is the Scene implementation.

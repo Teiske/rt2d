@@ -224,8 +224,11 @@ IF(MAKE_START)
 		start/myscene.h
 		start/myenemy.cpp
 		start/myenemy.h
+		start/myplatform.cpp
+		start/myplatform.h
 		start/entitycollision.cpp
 		start/entitycollision.h
+	
 	)
 	target_link_libraries(start
 		${ALL_GRAPHICS_LIBS}

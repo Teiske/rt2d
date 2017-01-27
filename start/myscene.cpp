@@ -17,40 +17,36 @@ MyScene::MyScene() : Scene() {
 	// the Sprite is added in Constructor of MyEntity.
 	myentity = new MyEntity();
 	myentity->position = Point2(SWIDTH / 2, 450);
-	myentity->scale = Point2(1, 1);
-
-	myenemy = new MyEnemy();
-	myenemy->position = Point2(200, 450);
-	myenemy->scale = Point2(1, 1);
 
 	// create the scene 'tree'
 	// add myentity to this Scene as a child.
 	this->addChild(myentity);
-	this->addChild(myenemy);
+	
+	// add enemies through an array 
+	enemySpawn(100, 500);
+	enemySpawn(200, 500);
+	enemySpawn(300, 500);
+	enemySpawn(400, 500);
+	enemySpawn(500, 500);
 }
 
 
 MyScene::~MyScene() {
 	// deconstruct and delete the Tree
 	this->removeChild(myentity);
-	this->removeChild(myenemy);
 
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
-	delete myenemy;
+
 }
 
-void MyScene::enemySpawn(int amount) {
-	for (int i = 0; i > amount; i++) {
-		rand() * 100;
-		int ypos = 600;
-
-		myenemy = new MyEnemy();
-		myenemy->position = Point2(i, ypos);
+void MyScene::enemySpawn(float x, float y) {
+		MyEnemy* myenemy = new MyEnemy();
+		myenemy->position = Point2(x, y);
 
 		this->addChild(myenemy);
-		//myenemy.push_back(myenemy);
-	}
+		myenemyVector.push_back(myenemy);
+		std::cout << "im spawning" << std::endl;
 }
 
 void MyScene::update(float deltaTime) {
@@ -72,18 +68,29 @@ void MyScene::update(float deltaTime) {
 		myentity->addForce(Vector2(0, -950));
 	}
 
-	//Collision with enemy
-	if (myentity->isCollidingWith(myenemy)) {
-		std::cout << "Enemy is destroyed" << std::endl;
-		this->removeChild(myenemy);
-		myenemy->position.y = -1000;
-	}
-
 	// Rotate color of entity
 	//if (t.seconds() > 0.0333f) {
 		 //RGBAColor color = myentity->sprite()->color;
 		 //myentity->sprite()->color = Color::rotate(color, 0.01f);
 		 //t.start();
 	//}
+
+	//Function to detect collision and deleting enemies
+	despawnEnemy();
 	
+}
+
+void MyScene::despawnEnemy(){
+	std::vector<MyEnemy*>::iterator it = myenemyVector.begin();
+	while (it != myenemyVector.end()) {
+		if ((*it)->isCollidingWith(myentity)) {
+			MyEnemy* e = (*it);
+			this->removeChild(e);
+			it = myenemyVector.erase(it);
+			delete e;
+		}
+		else {
+			it++;
+		}
+	}
 }
