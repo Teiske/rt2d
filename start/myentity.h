@@ -16,6 +16,7 @@ class MyEntity : public EntityCollision {
 public:
 	/// @brief Constructor
 	MyEntity();
+
 	/// @brief Destructor
 	virtual ~MyEntity();
 
@@ -29,11 +30,12 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
-private:
-	/* add your private declarations */
 	Vector2 velocity;
 	Vector2 gravity;
 	Vector2 acceleration;
+private:
+	/* add your private declarations */
+	
 };
 
 #endif /* MYENTITY_H */

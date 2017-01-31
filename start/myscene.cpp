@@ -1,6 +1,8 @@
 /**
  * This class describes MyScene behavior.
  *
+ * @file myscene.cpp
+ *
  * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
  */
 
@@ -28,6 +30,8 @@ MyScene::MyScene() : Scene() {
 	enemySpawn(300, 500);
 	enemySpawn(400, 500);
 	enemySpawn(500, 500);
+
+	platformSpawn(1000, 500);
 }
 
 
@@ -38,15 +42,58 @@ MyScene::~MyScene() {
 	// delete myentity from the heap (there was a 'new' in the constructor)
 	delete myentity;
 
+	myenemyVector.clear();
+	myplatformVector.clear();
 }
 
 void MyScene::enemySpawn(float x, float y) {
-		MyEnemy* myenemy = new MyEnemy();
-		myenemy->position = Point2(x, y);
+	MyEnemy* myenemy = new MyEnemy();
+	myenemy->position = Point2(x, y);
 
-		this->addChild(myenemy);
-		myenemyVector.push_back(myenemy);
-		std::cout << "im spawning" << std::endl;
+	this->addChild(myenemy);
+	myenemyVector.push_back(myenemy);
+	std::cout << "im spawning" << std::endl;
+}
+
+void MyScene::enemyDespawn() {
+	std::vector<MyEnemy*>::iterator it = myenemyVector.begin();
+	while (it != myenemyVector.end()) {
+		if ((*it)->isCollidingWith(myentity)) {
+			MyEnemy* e = (*it);
+			this->removeChild(e);
+			it = myenemyVector.erase(it);
+			delete e;
+		    std::cout << "Enemy is despawned" << std::endl;
+		}
+		else {
+			it++;
+		}
+	}
+}
+
+void MyScene::platformSpawn(float x, float y) {
+	MyPlatform *myplatform = new MyPlatform();
+	myplatform->position = Point2(x, y);
+
+	this->addChild(myplatform);
+	myplatformVector.push_back(myplatform);
+	std::cout << "Platform created" << std::endl;
+}
+
+void MyScene::entityOnPlatform() {
+	std::vector<MyPlatform*>::iterator it = myplatformVector.begin();
+	while (it != myplatformVector.end()) {
+		if (myentity->isCollidingWith((*it))) {
+			onP = true;
+			myentity->velocity.y = 0;
+			myentity->position = Point2(myentity->position.x, (*it)->position.y - 45);
+			std::cout << "Colliding with platform" << std::endl;
+		 }
+		else {
+			onP = false;
+		}
+		it++;
+	}
 }
 
 void MyScene::update(float deltaTime) {
@@ -68,29 +115,14 @@ void MyScene::update(float deltaTime) {
 		myentity->addForce(Vector2(0, -950));
 	}
 
+	//Function to detect collision and what should when there is collision
+	enemyDespawn();
+	entityOnPlatform();
+
 	// Rotate color of entity
 	//if (t.seconds() > 0.0333f) {
 		 //RGBAColor color = myentity->sprite()->color;
 		 //myentity->sprite()->color = Color::rotate(color, 0.01f);
 		 //t.start();
 	//}
-
-	//Function to detect collision and deleting enemies
-	despawnEnemy();
-	
-}
-
-void MyScene::despawnEnemy(){
-	std::vector<MyEnemy*>::iterator it = myenemyVector.begin();
-	while (it != myenemyVector.end()) {
-		if ((*it)->isCollidingWith(myentity)) {
-			MyEnemy* e = (*it);
-			this->removeChild(e);
-			it = myenemyVector.erase(it);
-			delete e;
-		}
-		else {
-			it++;
-		}
-	}
 }

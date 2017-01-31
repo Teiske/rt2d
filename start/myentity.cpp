@@ -1,6 +1,8 @@
 /**
  * This class describes MyEntity behavior.
  *
+ * @file myentity.cpp
+ *
  * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
  */
 

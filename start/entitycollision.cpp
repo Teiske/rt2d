@@ -1,6 +1,8 @@
 /**
  * This class describes Entity Collision behavior.
  *
+ * @file entitycollision.cpp
+ *
  * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
  */
 

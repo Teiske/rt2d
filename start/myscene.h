@@ -25,14 +25,29 @@ public:
 
 	/// @brief Destructor
 	virtual ~MyScene();
-	
+
+	/// @brief enemySpawn is used to place enemies in the scene
+	/// @param float x and y is used to give the enemies a position in the scene
+	/// @return void
 	void enemySpawn(float x, float y);
+
+	/// @brief desawnEnemy is used to delete enemies form the scene
+	void enemyDespawn();
+
+	/// @brief plaformSpawn is used to place platforms in the scene
+	/// @param float x and y is used to give the platforms a position in the scene
+	/// @return void
+	void platformSpawn(float x, float y);
+
+	/// @brief desawnEnemy is used to delete enemies form the scene
+	void entityOnPlatform();
+
 	/// @brief update is automatically called every frame
 	/// @param deltaTime the elapsed time in seconds
 	/// @return void
 	virtual void update(float deltaTime);
-
-	void despawnEnemy();
+	
+	
 
 private:
 	/// @brief The squares on the screen
@@ -41,12 +56,13 @@ private:
 	std::vector<MyEnemy*> myenemyVector;
 	std::vector<MyPlatform*> myplatformVector;
 
-
 	/// @brief a Timer to rotate the color every n seconds
 	Timer t;
 
 	/// @brief a boolean so you can jump
 	bool jump = false;
+
+	bool onP = false;
 
 	
 

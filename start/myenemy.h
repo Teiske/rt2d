@@ -30,10 +30,11 @@ public:
 	/// @return void
 	virtual void update(float deltaTime);
 
-private:
 	Vector2 velocity;
 	Vector2 gravity;
 	Vector2 acceleration;
+private:
+	
 };
 
 #endif // !MYENEMY_H

@@ -1,9 +1,10 @@
 /**
  * This class describes MyEnemy behavior.
  *
+ * @file myenemy.cpp
+ *
  * Copyright 2017 Teis Gossen <teisgossen@gmail.com>
  */
-
 
 #include "myenemy.h"
 

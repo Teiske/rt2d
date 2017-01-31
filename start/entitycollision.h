@@ -20,7 +20,7 @@ public:
 	/// @brief Destructor
 	virtual ~EntityCollision();
 
-	/// @brief isCollidingWith is used to check if an entity ic colliding with another entity.
+	/// @brief isCollidingWith is used to check if an entity is colliding with another entity.
 	/// @param Collision detection is used to check to see if something needs to be deleted or if it should stop something form falling.
 	/// @return force
 	bool isCollidingWith(Entity* other);
