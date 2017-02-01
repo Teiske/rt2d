@@ -3,13 +3,21 @@ cmake_minimum_required (VERSION 2.6)
 project (rt2d)
 
 # delete CMakeCache.txt from the build directory when you edit these options
+####################################################################
 OPTION(MAKE_START "Make RT2D start application" ON)
 OPTION(MAKE_DEMO "Make RT2D demo (tests) application" ON)
-OPTION(MAKE_RS232 "Make RS232 library" ON)
-OPTION(USE_OPENAL "Use OpenAL" OFF)
+OPTION(MAKE_FLOCKING "Make flocking application" ON)
+OPTION(MAKE_BASIC3D "Make basic3D application" ON)
+
+OPTION(USE_RS232 "Use RS232 library" OFF)
+
+OPTION(USE_OPENAL "Use OpenAL library" OFF)
 OPTION(MAKE_AUDIOSTART "Make OpenAL/RT2D audiostart" OFF)
 OPTION(MAKE_OPENAL_TONEGEN "Make OpenAL Tone Generator" OFF)
 
+OPTION(USE_BOX2D "Use Box2D" ON)
+OPTION(MAKE_BOX2DSTART "Make Box2D/RT2D box2dstart" ON)
+####################################################################
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
     message( FATAL_ERROR "Please select another Build Directory ! (and give it a clever name, like 'build')" )
@@ -55,17 +63,18 @@ find_package(OpenGL REQUIRED)
 add_subdirectory (external)
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/external/glfw-3.0.3/include/GLFW/
-	${CMAKE_SOURCE_DIR}/external/glm-0.9.7.0/
-	${CMAKE_SOURCE_DIR}/external/glew-1.9.0/include/
-	${CMAKE_SOURCE_DIR}/rt2d/
+	${CMAKE_SOURCE_DIR}/external/glfw-3.0.3/include/GLFW
+	${CMAKE_SOURCE_DIR}/external/glm-0.9.8.4
+	${CMAKE_SOURCE_DIR}/external/glew-1.9.0/include
+	${CMAKE_SOURCE_DIR}/external
+	${CMAKE_SOURCE_DIR}/rt2d
 	${CMAKE_SOURCE_DIR}/.
 )
 
 link_directories(
-	${CMAKE_SOURCE_DIR}/external/glfw-3.0.3/src/
-	${CMAKE_SOURCE_DIR}/external/glew-1.9.0/
-	${CMAKE_SOURCE_DIR}/external/
+	${CMAKE_SOURCE_DIR}/external/glfw-3.0.3/src
+	${CMAKE_SOURCE_DIR}/external/glew-1.9.0
+	${CMAKE_SOURCE_DIR}/external
 	${CMAKE_SOURCE_DIR}/rt2d
 )
 
@@ -83,22 +92,6 @@ add_definitions(
 	-DGLEW_STATIC
 	-D_CRT_SECURE_NO_WARNINGS
 )
-
-####################################################################
-# librs232.a                                                       #
-####################################################################
-IF(MAKE_RS232)
-	include_directories(
-		${CMAKE_SOURCE_DIR}/external/rs232/
-	)
-	link_directories(
-		${CMAKE_SOURCE_DIR}/external/rs232
-	)
-	add_library( rs232 STATIC
-		external/rs232/rs232.c
-		external/rs232/rs232.h
-	)
-ENDIF()
 
 ####################################################################
 # librt2d.a                                                        #
@@ -131,7 +124,6 @@ add_library(rt2d
 	rt2d/shader.h
 	rt2d/sprite.cpp
 	rt2d/sprite.h
-	rt2d/stringutil.h
 	rt2d/text.cpp
 	rt2d/text.h
 	rt2d/texture.cpp
@@ -152,68 +144,87 @@ file(
 )
 
 ####################################################################
+# start                                                            #
+####################################################################
+IF(MAKE_START)
+	add_executable(start
+		start/main.cpp
+		start/myentity.cpp
+		start/myentity.h
+		start/myscene.cpp
+		start/myscene.h
+	)
+	target_link_libraries(start
+		${ALL_GRAPHICS_LIBS}
+	)
+	# Copy assets to the build directory
+	file(
+		COPY start/assets
+		DESTINATION ${CMAKE_BINARY_DIR}
+	)
+ENDIF()
+
+####################################################################
 # demo                                                             #
 ####################################################################
 IF(MAKE_DEMO)
 	add_executable(demo
-		demo/main.cpp
-		demo/basicentity.cpp
-		demo/basicentity.h
-		demo/canvas.cpp
-		demo/canvas.h
-		demo/scene00.cpp
-		demo/scene00.h
-		demo/scene01.cpp
-		demo/scene01.h
-		demo/scene02.cpp
-		demo/scene02.h
-		demo/scene03.cpp
-		demo/scene03.h
-		demo/scene03a.cpp
-		demo/scene03a.h
-		demo/scene03b.cpp
-		demo/scene03b.h
-		demo/scene04.cpp
-		demo/scene04.h
-		demo/scene05.cpp
-		demo/scene05.h
-		demo/scene06.cpp
-		demo/scene06.h
-		demo/scene06a.cpp
-		demo/scene06a.h
-		demo/scene07.cpp
-		demo/scene07.h
-		demo/scene08.cpp
-		demo/scene08.h
-		demo/scene09.cpp
-		demo/scene09.h
-		demo/scene10.cpp
-		demo/scene10.h
-		demo/scene11.cpp
-		demo/scene11.h
-	    demo/scene12.cpp
-	    demo/scene12.h
-	    demo/scene13.cpp
-	    demo/scene13.h
-	    demo/scene14.cpp
-	    demo/scene14.h
-		demo/scene15.cpp
-		demo/scene15.h
-		demo/superscene.cpp
-		demo/superscene.h
+		projects/demo/main.cpp
+		projects/demo/basicentity.cpp
+		projects/demo/basicentity.h
+		projects/demo/canvas.cpp
+		projects/demo/canvas.h
+		projects/demo/scene00.cpp
+		projects/demo/scene00.h
+		projects/demo/scene01.cpp
+		projects/demo/scene01.h
+		projects/demo/scene02.cpp
+		projects/demo/scene02.h
+		projects/demo/scene03.cpp
+		projects/demo/scene03.h
+		projects/demo/scene03a.cpp
+		projects/demo/scene03a.h
+		projects/demo/scene04.cpp
+		projects/demo/scene04.h
+		projects/demo/scene05.cpp
+		projects/demo/scene05.h
+		projects/demo/scene06.cpp
+		projects/demo/scene06.h
+		projects/demo/scene06a.cpp
+		projects/demo/scene06a.h
+		projects/demo/scene07.cpp
+		projects/demo/scene07.h
+		projects/demo/scene08.cpp
+		projects/demo/scene08.h
+		projects/demo/scene09.cpp
+		projects/demo/scene09.h
+		projects/demo/scene10.cpp
+		projects/demo/scene10.h
+		projects/demo/scene11.cpp
+		projects/demo/scene11.h
+	    projects/demo/scene12.cpp
+	    projects/demo/scene12.h
+	    projects/demo/scene13.cpp
+	    projects/demo/scene13.h
+	    projects/demo/scene14.cpp
+	    projects/demo/scene14.h
+		projects/demo/scene15.cpp
+		projects/demo/scene15.h
+		projects/demo/superscene.cpp
+		projects/demo/superscene.h
 	)
 	target_link_libraries(demo
 		${ALL_GRAPHICS_LIBS}
 	)
 	# Copy assets to the build directory
 	file(
-		COPY demo/assets
+		COPY projects/demo/assets
 		DESTINATION ${CMAKE_BINARY_DIR}
 	)
 ENDIF()
 
 ####################################################################
-# start                                                            #
+# Cube                                                             #
 ####################################################################
 IF(MAKE_START)
 	add_executable(start
@@ -229,14 +240,59 @@ IF(MAKE_START)
 		start/entitycollision.cpp
 		start/entitycollision.h
 	
+=======
+IF(MAKE_BASIC3D)
+	add_executable(basic3D
+		projects/basic3D/main.cpp
+		projects/basic3D/cube.cpp
+		projects/basic3D/cube.h
+		projects/basic3D/myscene.cpp
+		projects/basic3D/myscene.h
+		refs/remotes/rktrlng/master
 	)
-	target_link_libraries(start
+	target_link_libraries(basic3D
 		${ALL_GRAPHICS_LIBS}
 	)
 	# Copy assets to the build directory
 	file(
-		COPY start/assets
+		COPY projects/basic3D/assets
 		DESTINATION ${CMAKE_BINARY_DIR}
+	)
+ENDIF()
+
+####################################################################
+# flocking                                                         #
+####################################################################
+IF(MAKE_FLOCKING)
+	add_executable(flocking
+		projects/flocking/boid.cpp
+		projects/flocking/flock.cpp
+		projects/flocking/scene01.cpp
+		projects/flocking/main.cpp
+	)
+	target_link_libraries(flocking
+		${ALL_GRAPHICS_LIBS}
+	)
+	# Copy assets to the build directory
+	file(
+		COPY projects/flocking/assets
+		DESTINATION ${CMAKE_BINARY_DIR}
+	)
+ENDIF()
+
+####################################################################
+# librs232.a                                                       #
+####################################################################
+IF(USE_RS232)
+	include_directories(
+		${CMAKE_SOURCE_DIR}/external/rs232
+	)
+	link_directories(
+		${CMAKE_SOURCE_DIR}/external/rs232
+	)
+	add_library( rs232 STATIC
+		external/rs232/rs232.c
+		external/rs232/rs232.h
 	)
 ENDIF()
 
@@ -261,21 +317,21 @@ IF(USE_OPENAL)
 ENDIF()
 
 ####################################################################
-# RT2D/OpenAL audio start                                          #
+# RT2D/OpenAL audiostart                                           #
 ####################################################################
 IF(MAKE_AUDIOSTART AND USE_OPENAL)
 	add_executable(audiostart
-		audiostart/main.cpp
-		audiostart/myentity.cpp
-		audiostart/myentity.h
-		audiostart/myscene.cpp
-		audiostart/myscene.h
-		audiostart/audio/audio.cpp
-		audiostart/audio/audio.h
-		audiostart/audio/sound.cpp
-		audiostart/audio/sound.h
-		audiostart/audio/wav.cpp
-		audiostart/audio/wav.h
+		projects/audiostart/main.cpp
+		projects/audiostart/myentity.cpp
+		projects/audiostart/myentity.h
+		projects/audiostart/myscene.cpp
+		projects/audiostart/myscene.h
+		projects/audiostart/audio/audio.cpp
+		projects/audiostart/audio/audio.h
+		projects/audiostart/audio/sound.cpp
+		projects/audiostart/audio/sound.h
+		projects/audiostart/audio/wav.cpp
+		projects/audiostart/audio/wav.h
 	)
 	target_link_libraries(audiostart
 		${ALL_GRAPHICS_LIBS}
@@ -283,11 +339,10 @@ IF(MAKE_AUDIOSTART AND USE_OPENAL)
 	)
 	# Copy assets to the build directory
 	file(
-		COPY audiostart/assets
+		COPY projects/audiostart/assets
 		DESTINATION ${CMAKE_BINARY_DIR}
 	)
 ENDIF()
-
 
 ####################################################################
 # OpenAL tone generator                                            #
@@ -301,31 +356,49 @@ IF(MAKE_OPENAL_TONEGEN AND USE_OPENAL)
 		${OPENAL}
 	)
 ENDIF()
+
 ####################################################################
+# box2d.a                                                          #
+####################################################################
+IF(USE_BOX2D)
+	option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
+	option(BOX2D_INSTALL_DOC "Install Box2D documentation" OFF)
+	option(BOX2D_BUILD_SHARED "Build Box2D shared libraries" OFF)
+	option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
+	option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 
+	set(BOX2D_VERSION 2.3.2)
+	set(LIB_INSTALL_DIR lib${LIB_SUFFIX})
 
-if(WIN32)
-	# Xcode and Visual working directories for demo
-	#set_target_properties(demo PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/demo/")
-	#create_target_launcher(demo WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/")
+	# The Box2D library.
+	add_subdirectory(external/Box2D)
 
-	# Xcode and Visual working directories for start
-	#set_target_properties(start PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/start/")
-	#create_target_launcher(start WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/start/")
+	include_directories(
+		${CMAKE_SOURCE_DIR}/external/Box2D
+	)
+	link_directories(
+		${CMAKE_SOURCE_DIR}/external/Box2D
+	)
+	add_definitions(
+	    -DBOX2D_BUILD_STATIC
+	)
+	set(BOX2D_LIB
+	    Box2D
+	)
+ENDIF()
 
-	# create file tabs in visual studio
-	#SOURCE_GROUP(rt2d REGULAR_EXPRESSION ".*/rt2d/.*" )
-	#SOURCE_GROUP(demo REGULAR_EXPRESSION ".*/demo/.*" )
-	#SOURCE_GROUP(start REGULAR_EXPRESSION ".*/start/.*" )
-	#SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shaders$" )
-endif(WIN32)
+####################################################################
+# Box2D/RT2D box2dstart                                            #
+####################################################################
+IF(MAKE_BOX2DSTART AND USE_BOX2D)
+	add_executable(box2dstart
+		projects/box2dstart/main.cpp
+		projects/box2dstart/scene01.cpp
+	)
+	target_link_libraries (box2dstart
+		${BOX2D_LIB}
+		${ALL_GRAPHICS_LIBS}
+	)
+ENDIF()
 
-
-if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
-#add_custom_command(
-#   TARGET demo POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/demo${CMAKE_EXECUTABLE_SUFFIX}" "${CMAKE_CURRENT_SOURCE_DIR}/demo/"
-#)
-elseif (${CMAKE_GENERATOR} MATCHES "Xcode" )
-
-endif (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
+####################################################################

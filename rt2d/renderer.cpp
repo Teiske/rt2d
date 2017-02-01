@@ -93,7 +93,7 @@ int Renderer::init()
 	//glDepthFunc(GL_LESS);
 
 	// Cull triangles which normal is not towards the camera
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	if (UBERSHADER) { // from config.h
 		_uberShader =_resman.getShader(SPRITEVERTEXSHADER, SPRITEFRAGMENTSHADER);
@@ -131,7 +131,7 @@ void Renderer::renderScene(Scene* scene)
 	glfwSwapBuffers(_window);
 }
 
-void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity, Camera* camera)
+void Renderer::_renderEntity(glm::mat4 modelMatrix, Entity* entity, Camera* camera)
 {
 	// multiply ModelMatrix for this child with the ModelMatrix of the parent (the caller of this method)
 	// the first time we do this (for the root-parent), modelMatrix is identity.
@@ -141,17 +141,28 @@ void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity, Camera* cam
 	// fill _worldpos in Entity
 	glm::vec4 realpos = modelMatrix * glm::vec4(0,0,0,1);
 	// send the real world position after these transforms back to Entity->worldpos
-	entity->_worldpos = Vector2(realpos.x, realpos.y);
+	entity->_worldpos = Vector3(realpos.x, realpos.y, realpos.z);
 	// #######################################################
 
 	// Check for Sprites to see if we need to render anything
 	Sprite* sprite = entity->sprite();
 	if (sprite != NULL) {
+		// use spritepos for position
+		glm::vec3 position = glm::vec3(sprite->spriteposition.x, sprite->spriteposition.y, sprite->spriteposition.z);
+		glm::vec3 rotation = glm::vec3(sprite->spriterotation.x, sprite->spriterotation.y, sprite->spriterotation.z);
+		glm::vec3 scale = glm::vec3(sprite->spritescale.x, sprite->spritescale.y, sprite->spritescale.z);
+
+		// Build the Model matrix
+		glm::mat4 translationMatrix	= glm::translate(modelMatrix, position);
+		glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
+		glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), scale);
+		glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
+
 		// render the Sprite
 		if (sprite->dynamic()) {
-			this->_renderSprite(modelMatrix, sprite, true); // dynamic Sprite from PixelBuffer
+			this->_renderSprite(mm, sprite, true); // dynamic Sprite from PixelBuffer
 		} else {
-			this->_renderSprite(modelMatrix, sprite, false); // static Sprite from ResourceManager
+			this->_renderSprite(mm, sprite, false); // static Sprite from ResourceManager
 		}
 	}
 
@@ -174,21 +185,19 @@ void Renderer::_renderEntity(glm::mat4& modelMatrix, Entity* entity, Camera* cam
 	for (child = children.begin(); child != children.end(); child++) {
 		// Transform child's children...
 		this->_renderEntity(modelMatrix, *child, camera);
-		// ...then reset modelMatrix for siblings to the modelMatrix of the parent.
-		modelMatrix = this->_getModelMatrix( (*child)->parent() );
 	}
 }
 
 glm::mat4 Renderer::_getModelMatrix(Entity* entity)
 {
 	// OpenGL doesn't understand our Vector2. Make it glm::vec3 compatible.
-	glm::vec3 position = glm::vec3(entity->position.x, entity->position.y, 0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, entity->rotation);
-	glm::vec3 scale = glm::vec3(entity->scale.x, entity->scale.y, 1.0f);
+	glm::vec3 position = glm::vec3(entity->position.x, entity->position.y, entity->position.z);
+	glm::vec3 rotation = glm::vec3(entity->rotation.x, entity->rotation.y, entity->rotation.z);
+	glm::vec3 scale = glm::vec3(entity->scale.x, entity->scale.y, entity->scale.z);
 
 	// Build the Model matrix
 	glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), position);
-	glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(0.0f, 0.0f, rotation.z);
+	glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
 	glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), scale);
 
 	glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
@@ -196,7 +205,7 @@ glm::mat4 Renderer::_getModelMatrix(Entity* entity)
 	return mm;
 }
 
-void Renderer::_renderSpriteBatch(glm::mat4& modelMatrix, std::vector<Sprite*>& spritebatch, Camera* camera)
+void Renderer::_renderSpriteBatch(glm::mat4 modelMatrix, std::vector<Sprite*>& spritebatch, Camera* camera)
 {
 	Sprite* spr = spritebatch[0];
 	Shader* shader = _uberShader;
@@ -259,13 +268,13 @@ void Renderer::_renderSpriteBatch(glm::mat4& modelMatrix, std::vector<Sprite*>& 
 				glUniform2f(shader->uvOffsetID(), sprite->uvoffset.x, sprite->uvoffset.y);
 
 				// use spritepos for position
-				glm::vec3 position = glm::vec3(sprite->spriteposition.x, sprite->spriteposition.y, 0.0f);
-				glm::vec3 rotation = glm::vec3(0.0f, 0.0f, sprite->spriterotation);
-				glm::vec3 scale = glm::vec3(sprite->spritescale.x, sprite->spritescale.y, 0.0f);
+				glm::vec3 position = glm::vec3(sprite->spriteposition.x, sprite->spriteposition.y, sprite->spriteposition.z);
+				glm::vec3 rotation = glm::vec3(sprite->spriterotation.x, sprite->spriterotation.y, sprite->spriterotation.z);
+				glm::vec3 scale = glm::vec3(sprite->spritescale.x, sprite->spritescale.y, sprite->spritescale.z);
 
 				// Build the Model matrix
 				glm::mat4 translationMatrix	= glm::translate(modelMatrix, position);
-				glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(0.0f, 0.0f, rotation.z);
+				glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
 				glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), scale);
 				glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
 
@@ -276,7 +285,7 @@ void Renderer::_renderSpriteBatch(glm::mat4& modelMatrix, std::vector<Sprite*>& 
 
 }
 
-void Renderer::_renderSprite(const glm::mat4& modelMatrix, Sprite* sprite, bool dynamic)
+void Renderer::_renderSprite(const glm::mat4 modelMatrix, Sprite* sprite, bool dynamic)
 {
 	Shader* shader = _uberShader;
 	// ask resourcemanager
@@ -319,7 +328,7 @@ void Renderer::_renderSprite(const glm::mat4& modelMatrix, Sprite* sprite, bool 
 	}
 }
 
-void Renderer::_renderLine(const glm::mat4& modelMatrix, Line* line)
+void Renderer::_renderLine(const glm::mat4 modelMatrix, Line* line)
 {
 	Shader* shader = _uberShader;
 	// ask resourcemanager
@@ -354,7 +363,7 @@ void Renderer::_renderLine(const glm::mat4& modelMatrix, Line* line)
 	}
 }
 
-void Renderer::_renderMesh(const glm::mat4& modelMatrix, Shader* shader,
+void Renderer::_renderMesh(const glm::mat4 modelMatrix, Shader* shader,
 	Texture* texture, Mesh* mesh, int numverts,
 	GLuint mode, RGBAColor blendcolor)
 {

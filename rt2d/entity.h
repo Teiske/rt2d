@@ -41,9 +41,9 @@ public:
 	virtual void update(float deltaTime) = 0;
 
 	// transform
-	Point2 position; /**< @brief The position of the Entity */
-	float rotation; /**< @brief The rotation of the Entity */
-	Point2 scale; /**< @brief The scale of the Entity */
+	Point3 position; /**< @brief The position of the Entity */
+	Point3 rotation; /**< @brief The rotation of the Entity */
+	Point3 scale; /**< @brief The scale of the Entity */
 
 	// data structure
 	/// @brief add an Entity as a child of this Entity.
@@ -155,7 +155,7 @@ public:
 
 protected:
 	// updated world position after all transforms
-	Point2 _worldpos; /**< @brief The position of the Entity in the real world */
+	Point3 _worldpos; /**< @brief The position of the Entity in the real world */
 	std::vector<Sprite*> _spritebatch; ///< @brief The _spritebatch of this Entity
 
 private:
