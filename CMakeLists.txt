@@ -153,6 +153,12 @@ IF(MAKE_START)
 		start/myentity.h
 		start/myscene.cpp
 		start/myscene.h
+		start/myenemy.cpp
+		start/myenemy.h
+		start/entitycollision.cpp
+		start/entitycollision.h
+		start/myplatform.cpp
+		start/myplatform.h
 	)
 	target_link_libraries(start
 		${ALL_GRAPHICS_LIBS}
