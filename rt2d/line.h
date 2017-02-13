@@ -41,14 +41,16 @@ public:
 	/// @brief Add a Point to the Line
 	/// @param x coordinate of the Point
 	/// @param y coordinate of the Point
+	/// @param z coordinate of the Point (default 0.0f)
 	/// @return void
-	void addPoint(float x, float y);
+	void addPoint(float x, float y, float z = 0.0f);
 	/// @brief Edit a Point on the Line
 	/// @param id the Point to edit
 	/// @param x coordinate of the Point
 	/// @param y coordinate of the Point
+	/// @param z coordinate of the Point (default 0.0f)
 	/// @return void
-	void editPoint(unsigned int id, float x, float y);
+	void editPoint(unsigned int id, float x, float y, float z = 0.0f);
 	/// @brief Create a circle of points
 	/// @param radius the radius of the circle
 	/// @param segments the number of segments
@@ -62,7 +64,7 @@ public:
 
 	/// @brief Get the Points of this Line
 	/// @return std::vector<glm::vec3> _points
-	const std::vector<glm::vec3>& points() { return _points; };
+	std::vector<glm::vec3>& points() { return _points; };
 
 	/// @brief is this Line dynamic or not?
 	/// @return bool _dynamic

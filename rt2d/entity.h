@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <rt2d/rt2dconfig.h>
 #include <rt2d/timer.h>
@@ -126,7 +127,16 @@ public:
 	// line
 	/// @brief get the Line from this Entity.
 	/// @return Line* _line
-	Line* line() { return _line; };
+	Line* line() {
+		if (_line != NULL) {
+			return _line;
+		} else {
+			if (_linebatch.size() > 0) {
+				return &_linebatch[0];
+			}
+		}
+		return NULL;
+	};
 	/// @brief add a Line to this Entity by Line*.
 	/// @param line A pointer to a Line.
 	/// @return void
@@ -140,6 +150,9 @@ public:
 	/// @brief get the spritebatch of this Entity.
 	/// @return std::vector<Sprite*>& _spritebatch
 	std::vector<Sprite*>& spritebatch() { return _spritebatch; };
+	/// @brief get the linebatch of this Entity.
+	/// @return std::vector<Line>& _linebatch
+	std::vector<Line>& linebatch() { return _linebatch; };
 
 	/// @brief get the guid of this Entity.
 	/// @return int _guid
@@ -147,16 +160,27 @@ public:
 	/// @brief get the parent of this Entity.
 	/// @return Entity* _parent
 	Entity* parent() { return _parent; };
+
 	/// @brief get the world position of this Entity.
-	/// @return Point2 _worldpos
-	Point2 worldpos() { return _worldpos; };
+	/// @return Point3 _worldposition
+	Point3 worldposition() { return _worldposition; };
+	/// @brief get the world rotation of this Entity.
+	/// @return Point3 _worldrotation
+	Point3 worldrotation() { return _worldrotation; };
+	/// @brief get the world scale of this Entity.
+	/// @return Point3 _worldscale
+	Point3 worldscale() { return _worldscale; };
 
 	friend class Renderer;
 
 protected:
-	// updated world position after all transforms
-	Point3 _worldpos; /**< @brief The position of the Entity in the real world */
+	// updated world transforms
+	Point3 _worldposition; /**< @brief The position of the Entity in the real world */
+	Point3 _worldrotation; /**< @brief The rotation of the Entity in the real world */
+	Point3 _worldscale; /**< @brief The scale of the Entity in the real world */
+
 	std::vector<Sprite*> _spritebatch; ///< @brief The _spritebatch of this Entity
+	std::vector<Line> _linebatch; ///< @brief The _linebatch of this Entity
 
 private:
 	// identity
@@ -186,6 +210,11 @@ private:
 			delete _line;
 			_line = NULL;
 		}
+	};
+	/// @brief delete the Linebatch of this Entity.
+	/// @return void
+	void deleteLinebatch() {
+		_linebatch.clear();
 	};
 	/// @brief delete the Spritebatch of this Entity.
 	/// @return void

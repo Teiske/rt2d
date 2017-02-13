@@ -6,8 +6,10 @@ project (rt2d)
 ####################################################################
 OPTION(MAKE_START "Make RT2D start application" ON)
 OPTION(MAKE_DEMO "Make RT2D demo (tests) application" ON)
-OPTION(MAKE_FLOCKING "Make flocking application" ON)
-OPTION(MAKE_BASIC3D "Make basic3D application" ON)
+OPTION(MAKE_FLOCKING "Make flocking application" OFF)
+OPTION(MAKE_BASIC3D "Make basic3D application" OFF)
+OPTION(MAKE_NOISE "Make Perlin Noise application" ON)
+OPTION(MAKE_GEOMETRIC "Make GeoMetric application" ON)
 
 OPTION(USE_RS232 "Use RS232 library" OFF)
 
@@ -15,8 +17,8 @@ OPTION(USE_OPENAL "Use OpenAL library" OFF)
 OPTION(MAKE_AUDIOSTART "Make OpenAL/RT2D audiostart" OFF)
 OPTION(MAKE_OPENAL_TONEGEN "Make OpenAL Tone Generator" OFF)
 
-OPTION(USE_BOX2D "Use Box2D" ON)
-OPTION(MAKE_BOX2DSTART "Make Box2D/RT2D box2dstart" ON)
+OPTION(USE_BOX2D "Use Box2D" OFF)
+OPTION(MAKE_BOX2DSTART "Make Box2D/RT2D box2dstart" OFF)
 ####################################################################
 
 if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
@@ -216,6 +218,8 @@ IF(MAKE_DEMO)
 	    projects/demo/scene14.h
 		projects/demo/scene15.cpp
 		projects/demo/scene15.h
+		projects/demo/scene16.cpp
+		projects/demo/scene16.h
 		projects/demo/superscene.cpp
 		projects/demo/superscene.h
 	)
@@ -263,6 +267,37 @@ IF(MAKE_BASIC3D)
 	file(
 		COPY projects/basic3D/assets
 		DESTINATION ${CMAKE_BINARY_DIR}
+	)
+ENDIF()
+
+
+####################################################################
+# Noise                                                            #
+####################################################################
+IF(MAKE_NOISE)
+	add_executable(noise
+		projects/perlinnoise/main.cpp
+		projects/perlinnoise/myscene.cpp
+		projects/perlinnoise/myscene.h
+	)
+	target_link_libraries(noise
+		${ALL_GRAPHICS_LIBS}
+	)
+ENDIF()
+
+####################################################################
+# geometric                                                        #
+####################################################################
+IF(MAKE_GEOMETRIC)
+	add_executable(geometric
+		projects/geometric/main.cpp
+		projects/geometric/geometric.cpp
+		projects/geometric/geometric.h
+		projects/geometric/myscene.cpp
+		projects/geometric/myscene.h
+	)
+	target_link_libraries(geometric
+		${ALL_GRAPHICS_LIBS}
 	)
 ENDIF()
 

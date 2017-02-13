@@ -118,7 +118,7 @@ void Renderer::renderScene(Scene* scene)
 
 	// get viewMatrix from Camera (Camera position and direction)
 	_viewMatrix = scene->camera()->viewMatrix();
-	// Our Projection Matrix (orthographic camera)
+	// Our Projection Matrix (orthographic or perspective camera)
 	_projectionMatrix = scene->camera()->projectionMatrix();
 
 	// 'root' scene node has identity Matrix
@@ -133,64 +133,21 @@ void Renderer::renderScene(Scene* scene)
 
 void Renderer::_renderEntity(glm::mat4 modelMatrix, Entity* entity, Camera* camera)
 {
-	// multiply ModelMatrix for this child with the ModelMatrix of the parent (the caller of this method)
-	// the first time we do this (for the root-parent), modelMatrix is identity.
-	modelMatrix *= this->_getModelMatrix(entity);
+	/*
+	  All steps to take:
 
-	// #######################################################
-	// fill _worldpos in Entity
-	glm::vec4 realpos = modelMatrix * glm::vec4(0,0,0,1);
-	// send the real world position after these transforms back to Entity->worldpos
-	entity->_worldpos = Vector3(realpos.x, realpos.y, realpos.z);
-	// #######################################################
+	  - build model matrix for this entity
+	  - multiply that with model matrix of parent
+	  - update real world coordinates of entity (we calculate it here anyway)
 
-	// Check for Sprites to see if we need to render anything
-	Sprite* sprite = entity->sprite();
-	if (sprite != NULL) {
-		// use spritepos for position
-		glm::vec3 position = glm::vec3(sprite->spriteposition.x, sprite->spriteposition.y, sprite->spriteposition.z);
-		glm::vec3 rotation = glm::vec3(sprite->spriterotation.x, sprite->spriterotation.y, sprite->spriterotation.z);
-		glm::vec3 scale = glm::vec3(sprite->spritescale.x, sprite->spritescale.y, sprite->spritescale.z);
+	  - render sprite (if any)
+	  - render line (if any)
+	  - render spritebatch (if any)
 
-		// Build the Model matrix
-		glm::mat4 translationMatrix	= glm::translate(modelMatrix, position);
-		glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
-		glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), scale);
-		glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
+	  Do this recursively for all children of this entity.
+	*/
 
-		// render the Sprite
-		if (sprite->dynamic()) {
-			this->_renderSprite(mm, sprite, true); // dynamic Sprite from PixelBuffer
-		} else {
-			this->_renderSprite(mm, sprite, false); // static Sprite from ResourceManager
-		}
-	}
-
-	// Check for Lines to see if we need to render anything
-	Line* line = entity->line();
-	if (line != NULL) {
-		// render the Line.
-		this->_renderLine(modelMatrix, line);
-	}
-
-	// Check for Spritebatch to see if we need to render anything
-	if (entity->_spritebatch.size() > 0) {
-		// render the Spritebatch
-		this->_renderSpriteBatch(modelMatrix, entity->_spritebatch, camera);
-	}
-
-	// Render all Children (recursively)
-	std::vector<Entity*> children = entity->children();
-	std::vector<Entity*>::iterator child;
-	for (child = children.begin(); child != children.end(); child++) {
-		// Transform child's children...
-		this->_renderEntity(modelMatrix, *child, camera);
-	}
-}
-
-glm::mat4 Renderer::_getModelMatrix(Entity* entity)
-{
-	// OpenGL doesn't understand our Vector2. Make it glm::vec3 compatible.
+	// OpenGL doesn't understand our Point3. Make it glm::vec3 compatible.
 	glm::vec3 position = glm::vec3(entity->position.x, entity->position.y, entity->position.z);
 	glm::vec3 rotation = glm::vec3(entity->rotation.x, entity->rotation.y, entity->rotation.z);
 	glm::vec3 scale = glm::vec3(entity->scale.x, entity->scale.y, entity->scale.z);
@@ -202,7 +159,65 @@ glm::mat4 Renderer::_getModelMatrix(Entity* entity)
 
 	glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
 
-	return mm;
+	// multiply ModelMatrix for this entity with the ModelMatrix of its parent (the caller of this method)
+	// the first time we do this (for the root-parent), modelMatrix is identity.
+	modelMatrix *= mm;
+
+	// #######################################################
+	//glm::vec4 realpos = modelMatrix * glm::vec4(0,0,0,1);
+	//entity->_worldposition = Vector3(realpos.x, realpos.y, realpos.z);
+
+	// send the real world transforms back to Entity (glm::decompose is experimental)
+	glm::vec3 realscale;
+	glm::quat realrot;
+	glm::vec3 realpos;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(modelMatrix, realscale, realrot, realpos, skew, perspective);
+
+	entity->_worldposition = Point3(realpos.x, realpos.y, realpos.z);
+	entity->_worldrotation = Point3(realrot.x, realrot.y, realrot.z);
+	entity->_worldscale = Point3(realscale.x, realscale.y, realscale.z);
+	// #######################################################
+
+	// Check for Sprites to see if we need to render anything
+	Sprite* sprite = entity->sprite();
+	if (sprite != NULL) {
+		// render the Sprite. Just use the model matrix for the entity since this is a single sprite.
+		if (sprite->dynamic()) {
+			this->_renderSprite(modelMatrix, sprite, true); // dynamic Sprite from PixelBuffer
+		} else {
+			this->_renderSprite(modelMatrix, sprite, false); // static Sprite from ResourceManager
+		}
+	}
+
+	// Check for Spritebatch to see if we need to render anything
+	if (entity->_spritebatch.size() > 0) {
+		// render the Spritebatch
+		this->_renderSpriteBatch(modelMatrix, entity->_spritebatch, camera);
+	}
+
+	// Check for Lines to see if we need to render anything
+	Line* line = entity->line();
+	if (line != NULL) {
+		// render the Line.
+		this->_renderLine(modelMatrix, line);
+	}
+
+	// Check for Linebatch to see if we need to render anything
+	size_t s = entity->_linebatch.size();
+	if (s > 0) { // render the Linebatch
+		for (size_t i = 0; i < s; i++) {
+			this->_renderLine(modelMatrix, &entity->_linebatch[i]);
+		}
+	}
+
+	// Render all Children (recursively)
+	std::vector<Entity*> children = entity->children();
+	std::vector<Entity*>::iterator child;
+	for (child = children.begin(); child != children.end(); child++) {
+		this->_renderEntity(modelMatrix, *child, camera);
+	}
 }
 
 void Renderer::_renderSpriteBatch(glm::mat4 modelMatrix, std::vector<Sprite*>& spritebatch, Camera* camera)
@@ -241,6 +256,7 @@ void Renderer::_renderSpriteBatch(glm::mat4 modelMatrix, std::vector<Sprite*>& s
 				int right_edge = camera->position.x + half_width;
 				int top_edge = camera->position.y - half_height;
 				int bottom_edge = camera->position.y + half_height;
+
 				float posx = sprite->spriteposition.x;
 				float posy = sprite->spriteposition.y;
 
@@ -267,15 +283,16 @@ void Renderer::_renderSpriteBatch(glm::mat4 modelMatrix, std::vector<Sprite*>& s
 				// _uvOffsetID
 				glUniform2f(shader->uvOffsetID(), sprite->uvoffset.x, sprite->uvoffset.y);
 
-				// use spritepos for position
+				// use sprite transform to build the model matrix.
 				glm::vec3 position = glm::vec3(sprite->spriteposition.x, sprite->spriteposition.y, sprite->spriteposition.z);
 				glm::vec3 rotation = glm::vec3(sprite->spriterotation.x, sprite->spriterotation.y, sprite->spriterotation.z);
 				glm::vec3 scale = glm::vec3(sprite->spritescale.x, sprite->spritescale.y, sprite->spritescale.z);
 
-				// Build the Model matrix
+				// Build the model matrix for this sprite.
 				glm::mat4 translationMatrix	= glm::translate(modelMatrix, position);
 				glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
 				glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), scale);
+
 				glm::mat4 mm = translationMatrix * rotationMatrix * scalingMatrix;
 
 				this->_renderMesh(mm, shader, texture, mesh, mesh->numverts(), GL_TRIANGLES, blendcolor);
