@@ -236,21 +236,6 @@ ENDIF()
 ####################################################################
 # Cube                                                             #
 ####################################################################
-IF(MAKE_START)
-	add_executable(start
-		start/main.cpp
-		start/myentity.cpp
-		start/myentity.h
-		start/myscene.cpp
-		start/myscene.h
-		start/myenemy.cpp
-		start/myenemy.h
-		start/myplatform.cpp
-		start/myplatform.h
-		start/entitycollision.cpp
-		start/entitycollision.h
-	
-=======
 IF(MAKE_BASIC3D)
 	add_executable(basic3D
 		projects/basic3D/main.cpp
